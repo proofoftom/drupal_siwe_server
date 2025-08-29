@@ -2,7 +2,7 @@
 
 ## Overview
 
-This module provides API endpoints for SIWE authentication with Next-Drupal, including JWT token generation and validation.
+This module provides API endpoints for SIWE authentication with Next-Drupal, using the Drupal JWT module for token generation and validation.
 
 ## Requirements
 
@@ -10,20 +10,30 @@ This module provides API endpoints for SIWE authentication with Next-Drupal, inc
 - PHP 8.1 or higher
 - Composer
 - siwe_login module
-- firebase/php-jwt library
+- Drupal JWT module
 
 ## Installation
 
 1. Install via Composer: `composer require drupal/siwe_server`
-2. Enable modules: `drush en siwe_server -y`
-3. Import configuration: `drush config-import --partial --source=modules/custom/siwe_server/config/install`
-4. Configure at `/admin/config/services/siwe-server`
+2. Enable modules: `drush en siwe_server jwt jwt_auth_issuer -y`
+3. Configure the JWT module at `/admin/config/system/jwt` (see below)
+4. Import configuration: `drush config-import --partial --source=modules/custom/siwe_server/config/install`
+5. Configure at `/admin/config/services/siwe-server`
+
+## JWT Module Configuration
+
+This module now relies on the Drupal JWT module for token generation. You'll need to:
+
+1. Create a key at `/admin/config/system/keys`:
+   - Type: JWT HMAC Key or JWT RSA Key
+   - Provider: Configuration or File
+2. Configure the JWT module at `/admin/config/system/jwt` to use your key
 
 ## API Endpoints
 
 - `GET /api/siwe/nonce` - Get authentication nonce
 - `POST /api/siwe/auth` - Authenticate with SIWE
-- `POST /api/siwe/refresh` - Refresh access token
+- `POST /api/siwe/refresh` - Refresh access token (not currently supported with JWT module)
 - `POST /api/siwe/logout` - Logout user
 
 ## Configuration
@@ -32,7 +42,7 @@ See `/admin/config/services/siwe-server` for configuration options.
 
 ## Security
 
-- Uses JWT tokens with RS256 algorithm
+- Uses JWT tokens with configurable algorithm (defaults to HS256)
 - Configurable token expiration
 - CORS support
 
@@ -45,14 +55,9 @@ Report issues at: [https://github.com/proofoftom/drupal_siwe_server/issues](http
 This module provides REST API endpoints for SIWE authentication that are compatible with Next-Drupal:
 
 1. The `/api/siwe/auth` endpoint validates the SIWE message and signature using the siwe_login module
-2. If the authentication is successful, JWT tokens (access and refresh) are generated
-3. The JWT tokens can be used to authenticate subsequent requests to Drupal
-4. The `/api/siwe/refresh` endpoint allows refreshing the access token using the refresh token
-5. The `/api/siwe/logout` endpoint invalidates the refresh token
-
-## JWT Token Generation
-
-The module automatically generates RSA keys for JWT token signing and stores them in the Drupal state system. The public key can be retrieved using the `getPublicKey()` method of the JwtService class.
+2. If the authentication is successful, a JWT token is generated using the Drupal JWT module
+3. The JWT token can be used to authenticate subsequent requests to Drupal
+4. The `/api/siwe/logout` endpoint handles user logout
 
 ## CORS Configuration
 

@@ -14,22 +14,28 @@ class NextDrupalAuthService {
    * Formats authentication response for Next-Drupal.
    */
   public function formatAuthResponse(UserInterface $user, array $tokens): array {
-    return [
+    // The JWT module only provides an access_token, not refresh tokens
+    $response = [
       'access_token' => $tokens['access_token'],
-      'refresh_token' => $tokens['refresh_token'],
-      'expires_in' => $tokens['expires_in'],
       'token_type' => 'Bearer',
       'user' => [
         'uid' => $user->id(),
         'uuid' => $user->uuid(),
         'name' => $user->getAccountName(),
         'mail' => $user->getEmail(),
-        'ethereum_address' => $user->get('field_ethereum_address')->value,
+        'ethereum_address' => $user->get('field_ethereum_address')->value ?? null,
         'roles' => array_values($user->getRoles()),
         'display_name' => $user->getDisplayName(),
         'url' => Url::fromRoute('entity.user.canonical', ['user' => $user->id()], ['absolute' => TRUE])->toString(),
       ],
     ];
+    
+    // Add expires_in if it exists in the tokens array
+    if (isset($tokens['expires_in'])) {
+      $response['expires_in'] = $tokens['expires_in'];
+    }
+    
+    return $response;
   }
 
   /**

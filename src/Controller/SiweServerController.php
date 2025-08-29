@@ -3,27 +3,13 @@
 namespace Drupal\siwe_server\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Drupal\siwe_server\Service\JwtService;
 
 /**
  * Controller for SIWE server endpoints.
  */
 class SiweServerController extends ControllerBase {
-
-  protected $jwtService;
-
-  public function __construct(JwtService $jwt_service) {
-    $this->jwtService = $jwt_service;
-  }
-
-  public static function create(ContainerInterface $container) {
-    return new static(
-      $container->get('siwe_server.jwt_service')
-    );
-  }
 
   /**
    * Generates a nonce for SIWE.
@@ -49,28 +35,12 @@ class SiweServerController extends ControllerBase {
   }
 
   /**
-   * Refreshes an access token.
+   * Refresh functionality is not implemented as the JWT module doesn't provide
+   * refresh tokens by default. This would need to be implemented separately
+   * if refresh tokens are required.
    */
   public function refresh(Request $request): JsonResponse {
-    try {
-      $content = json_decode($request->getContent(), TRUE);
-      $refresh_token = $content['refresh_token'] ?? '';
-
-      if (empty($refresh_token)) {
-        return new JsonResponse(['error' => 'Refresh token is required'], 400);
-      }
-
-      $tokens = $this->jwtService->refreshAccessToken($refresh_token);
-
-      if (!$tokens) {
-        return new JsonResponse(['error' => 'Invalid refresh token'], 401);
-      }
-
-      return new JsonResponse($tokens);
-    }
-    catch (\Exception $e) {
-      return new JsonResponse(['error' => 'Failed to refresh token'], 500);
-    }
+    return new JsonResponse(['error' => 'Refresh tokens not supported with current JWT implementation'], 501);
   }
 
   /**
@@ -78,8 +48,7 @@ class SiweServerController extends ControllerBase {
    */
   public function logout(Request $request): JsonResponse {
     // In a JWT-based system, logout is typically handled client-side
-    // by deleting the tokens. However, we can still invalidate
-    // refresh tokens on the server side if we're storing them.
+    // by deleting the tokens.
     return new JsonResponse(['message' => 'Logged out successfully']);
   }
 

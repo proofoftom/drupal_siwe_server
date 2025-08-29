@@ -2,13 +2,14 @@
 
 namespace Drupal\siwe_server\Plugin\rest\resource;
 
+use Drupal\Core\Session\AccountInterface;
 use Drupal\rest\Plugin\ResourceBase;
 use Drupal\rest\ResourceResponse;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Drupal\siwe_login\Service\SiweAuthService;
-use Drupal\siwe_server\Service\JwtService;
 use Drupal\siwe_server\Service\NextDrupalAuthService;
+use Drupal\user\Entity\User;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -26,7 +27,6 @@ use Psr\Log\LoggerInterface;
 class SiweAuthResource extends ResourceBase {
 
   protected $siweAuthService;
-  protected $jwtService;
   protected $nextDrupalAuthService;
   protected $currentRequest;
 
@@ -37,13 +37,11 @@ class SiweAuthResource extends ResourceBase {
     array $serializer_formats,
     LoggerInterface $logger,
     SiweAuthService $siwe_auth_service,
-    JwtService $jwt_service,
     NextDrupalAuthService $next_drupal_auth_service,
     Request $current_request
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $serializer_formats, $logger);
     $this->siweAuthService = $siwe_auth_service;
-    $this->jwtService = $jwt_service;
     $this->nextDrupalAuthService = $next_drupal_auth_service;
     $this->currentRequest = $current_request;
   }
@@ -56,7 +54,6 @@ class SiweAuthResource extends ResourceBase {
       $container->getParameter('serializer.formats'),
       $container->get('logger.factory')->get('siwe_server'),
       $container->get('siwe_login.auth_service'),
-      $container->get('siwe_server.jwt_service'),
       $container->get('siwe_server.next_drupal_auth'),
       $container->get('request_stack')->getCurrentRequest()
     );
@@ -79,10 +76,20 @@ class SiweAuthResource extends ResourceBase {
         ], 401);
       }
 
-      // Generate JWT tokens for Next-Drupal
-      $tokens = $this->jwtService->generateTokens($user);
+      // Programmatically log in the user
+      \Drupal::service('session_manager')->start();
+      \Drupal::service('current_user')->setAccount($user);
+      
+      // Generate JWT token using the JWT module
+      $jwt_auth = \Drupal::service('jwt.authentication.jwt');
+      $access_token = $jwt_auth->generateToken();
 
       // Prepare response compatible with Next-Drupal
+      $tokens = [
+        'access_token' => $access_token,
+        'token_type' => 'Bearer',
+      ];
+      
       $response_data = $this->nextDrupalAuthService->formatAuthResponse($user, $tokens);
 
       $response = new ResourceResponse($response_data, 200);

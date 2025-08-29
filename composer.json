@@ -3,9 +3,7 @@
     "description": "API endpoints for SIWE authentication with Next-Drupal",
     "type": "drupal-module",
     "license": "GPL-2.0-or-later",
-    "require": {
-        "firebase/php-jwt": "^6.0"
-    },
+    "require": {},
     "autoload": {
         "psr-4": {
             "Drupal\\siwe_server\\": "src/"

@@ -6,5 +6,7 @@ package: Web services
 dependencies:
   - drupal:rest
   - drupal:serialization
+  - drupal:jwt
+  - jwt:jwt_auth_issuer
   - siwe_login:siwe_login
 configure: siwe_server.settings
