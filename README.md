@@ -38,7 +38,7 @@ See `/admin/config/services/siwe-server` for configuration options.
 
 ## Support
 
-Report issues at: https://github.com/your-org/siwe_drupal/issues
+Report issues at: [https://github.com/proofoftom/drupal_siwe_server/issues](https://github.com/proofoftom/drupal_siwe_server/issues)
 
 ## Implementation Details
 
@@ -57,6 +57,7 @@ The module automatically generates RSA keys for JWT token signing and stores the
 ## CORS Configuration
 
 The module includes CORS support with the following default configuration:
+
 - Allowed origins: `http://localhost:3000`, `https://your-nextjs-app.com`
 - Allowed methods: `GET`, `POST`, `OPTIONS`
 - Allowed headers: `Content-Type`, `Authorization`, `Accept`
