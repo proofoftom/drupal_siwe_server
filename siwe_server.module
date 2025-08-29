@@ -1,0 +1,39 @@
+<?php
+
+/**
+ * @file
+ * Contains siwe_server.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function siwe_server_help($route_name, RouteMatchInterface $route_match)
+{
+  switch ($route_name) {
+    case 'help.page.siwe_server':
+      return '<p>' . t('This module provides API endpoints for SIWE authentication with Next-Drupal.') . '</p>';
+  }
+}
+
+/**
+ * Implements hook_permission().
+ */
+function siwe_server_permission()
+{
+  return [
+    'access siwe api' => [
+      'title' => t('Access SIWE API'),
+      'description' => t('Allows access to the SIWE authentication API endpoints.'),
+    ],
+  ];
+}
+
+/**
+ * Permission callback for siwe_server module.
+ */
+// function siwe_server_permissions() {
+//   return [];
+// }

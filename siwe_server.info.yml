@@ -1,0 +1,10 @@
+name: "SIWE Server"
+type: module
+description: "API endpoints for SIWE authentication with Next-Drupal"
+core_version_requirement: ^10 || ^11
+package: Web services
+dependencies:
+  - drupal:rest
+  - drupal:serialization
+  - siwe_login:siwe_login
+configure: siwe_server.settings

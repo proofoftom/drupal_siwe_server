@@ -1,0 +1,22 @@
+siwe_server.settings:
+  type: config_object
+  label: 'SIWE Server settings'
+  mapping:
+    jwt_audience:
+      type: string
+      label: 'JWT Audience'
+    access_token_ttl:
+      type: integer
+      label: 'Access token TTL'
+    refresh_token_ttl:
+      type: integer
+      label: 'Refresh token TTL'
+    cors_enabled:
+      type: boolean
+      label: 'CORS enabled'
+    allowed_origins:
+      type: sequence
+      label: 'Allowed origins'
+      sequence:
+        type: string
+        label: 'Origin'

@@ -1,0 +1,7 @@
+jwt_audience: "next-drupal"
+access_token_ttl: 900
+refresh_token_ttl: 604800
+cors_enabled: true
+allowed_origins:
+  - "http://localhost:3000"
+  - "https://your-nextjs-app.com"

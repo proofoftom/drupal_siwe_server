@@ -1,0 +1,17 @@
+services:
+  siwe_server.jwt_service:
+    class: Drupal\siwe_server\Service\JwtService
+    arguments:
+      - "@config.factory"
+      - "@state"
+      - "@logger.factory"
+
+  siwe_server.next_drupal_auth:
+    class: Drupal\siwe_server\Service\NextDrupalAuthService
+
+  siwe_server.cors_subscriber:
+    class: Drupal\siwe_server\EventSubscriber\SiweServerCorsSubscriber
+    arguments:
+      - "@config.factory"
+    tags:
+      - { name: event_subscriber }
