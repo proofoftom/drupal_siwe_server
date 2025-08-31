@@ -1,26 +1,17 @@
 siwe_server.nonce:
-  path: '/api/siwe/nonce'
+  path: "/api/siwe/nonce"
   defaults:
     _controller: '\Drupal\siwe_server\Controller\SiweServerController::getNonce'
   requirements:
-    _access: 'TRUE'
-  options:
-    _admin_route: FALSE
-
-siwe_server.refresh:
-  path: '/api/siwe/refresh'
-  defaults:
-    _controller: '\Drupal\siwe_server\Controller\SiweServerController::refresh'
-  requirements:
-    _access: 'TRUE'
+    _access: "TRUE"
   options:
     _admin_route: FALSE
 
 siwe_server.logout:
-  path: '/api/siwe/logout'
+  path: "/api/siwe/logout"
   defaults:
     _controller: '\Drupal\siwe_server\Controller\SiweServerController::logout'
   requirements:
-    _access: 'TRUE'
+    _access: "TRUE"
   options:
     _admin_route: FALSE
