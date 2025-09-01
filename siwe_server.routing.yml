@@ -15,3 +15,13 @@ siwe_server.logout:
     _access: "TRUE"
   options:
     _admin_route: FALSE
+
+siwe_server.settings:
+  path: '/admin/config/services/siwe-server'
+  defaults:
+    _form: '\Drupal\siwe_server\Form\SiweServerSettingsForm'
+    _title: 'SIWE Server Settings'
+  requirements:
+    _permission: 'administer siwe server settings'
+  options:
+    _admin_route: TRUE

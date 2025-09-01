@@ -18,7 +18,7 @@ This module provides API endpoints for SIWE authentication with Next-Drupal, usi
 2. Enable modules: `drush en siwe_server jwt jwt_auth_issuer -y`
 3. Configure the JWT module at `/admin/config/system/jwt` (see below)
 4. Import configuration: `drush config-import --partial --source=modules/custom/siwe_server/config/install`
-5. Configure at `/admin/config/services/siwe-server`
+5. Configure at `/admin/config/services/siwe-server` or through the admin menu under "Configuration > Web services > SIWE Server"
 
 ## JWT Module Configuration
 

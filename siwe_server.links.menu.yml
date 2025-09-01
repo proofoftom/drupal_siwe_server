@@ -1,0 +1,6 @@
+siwe_server.settings:
+  title: "Sign in with Ethereum (SIWE) Server"
+  description: "Configure Sign in with Ethereum (SIWE) Server settings"
+  parent: system.admin_config_services
+  route_name: siwe_server.settings
+  weight: 100

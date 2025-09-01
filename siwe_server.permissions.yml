@@ -1,7 +1,9 @@
-# permission_callbacks:
-#   - 'Drupal\siwe_server\siwe_server_permissions'
-
 siwe_server.api_access:
   title: "Access SIWE API"
   description: "Allows access to the SIWE authentication API endpoints."
   restrict access: false
+
+administer siwe server settings:
+  title: 'Administer SIWE Server settings'
+  description: 'Allow users to configure SIWE Server module settings.'
+  restrict access: true
