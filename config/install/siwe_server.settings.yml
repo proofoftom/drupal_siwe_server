@@ -1,5 +1,4 @@
-jwt_audience: "next-drupal"
-cors_enabled: true
-allowed_origins:
-  - "http://localhost:3000"
-  - "https://your-nextjs-app.com"
+allow_drupal_login: true
+allowed_domains:
+  - "localhost:3000"
+  - "your-nextjs-app.com"

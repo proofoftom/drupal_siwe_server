@@ -2,15 +2,12 @@ siwe_server.settings:
   type: config_object
   label: "SIWE Server settings"
   mapping:
-    jwt_audience:
-      type: string
-      label: "JWT Audience"
-    cors_enabled:
+    allow_drupal_login:
       type: boolean
-      label: "CORS enabled"
-    allowed_origins:
+      label: "Allow Drupal login"
+    allowed_domains:
       type: sequence
-      label: "Allowed origins"
+      label: "Allowed Domains"
       sequence:
         type: string
-        label: "Origin"
+        label: "Domain"
