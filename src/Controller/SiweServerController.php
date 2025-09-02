@@ -2,7 +2,10 @@
 
 namespace Drupal\siwe_server\Controller;
 
+use Drupal\Core\Cache\CacheBackendInterface;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Controller\ControllerBase;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -10,6 +13,36 @@ use Symfony\Component\HttpFoundation\Request;
  * Controller for SIWE server endpoints.
  */
 class SiweServerController extends ControllerBase {
+
+  /**
+   * The cache backend.
+   *
+   * @var \Drupal\Core\Cache\CacheBackendInterface
+   */
+  protected CacheBackendInterface $cache;
+
+  /**
+   * Constructs the SiweServerController object.
+   *
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   The config factory.
+   * @param \Drupal\Core\Cache\CacheBackendInterface $cache_backend
+   *   The cache backend.
+   */
+  public function __construct(ConfigFactoryInterface $config_factory, CacheBackendInterface $cache_backend) {
+    $this->configFactory = $config_factory;
+    $this->cache = $cache_backend;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('config.factory'),
+      $container->get('cache.default')
+    );
+  }
 
   /**
    * Generates a nonce for SIWE.
@@ -20,13 +53,13 @@ class SiweServerController extends ControllerBase {
       $nonce = bin2hex(random_bytes(16));
 
       // Store nonce in cache with a 5-minute TTL (300 seconds)
-      $ttl = \Drupal::config('siwe_login.settings')->get('nonce_ttl');
+      $ttl = $this->configFactory->get('siwe_login.settings')->get('nonce_ttl') ?: 300;
       $cache_key = 'siwe_nonce:' . $this->getClientIdentifier($request);
-      \Drupal::cache()->set($cache_key, $nonce, time() + $ttl);
+      $this->cache->set($cache_key, $nonce, time() + $ttl);
 
       // Also store a reverse lookup to validate the nonce itself.
       $nonce_key = 'siwe_nonce_lookup:' . $nonce;
-      \Drupal::cache()->set($nonce_key, $this->getClientIdentifier($request), time() + 300);
+      $this->cache->set($nonce_key, $this->getClientIdentifier($request), time() + 300);
 
       return new JsonResponse(['nonce' => $nonce]);
     }

@@ -24,8 +24,25 @@ use Psr\Log\LoggerInterface;
  */
 class SiweAuthResource extends ResourceBase {
 
+  /**
+   * The SIWE authentication service.
+   *
+   * @var \Drupal\siwe_login\Service\SiweAuthService
+   */
   protected $siweAuthService;
+
+  /**
+   * The Next Drupal authentication service.
+   *
+   * @var \Drupal\siwe_server\Service\NextDrupalAuthService
+   */
   protected $nextDrupalAuthService;
+
+  /**
+   * The current HTTP request.
+   *
+   * @var \Symfony\Component\HttpFoundation\Request
+   */
   protected $currentRequest;
 
   public function __construct(
@@ -45,7 +62,7 @@ class SiweAuthResource extends ResourceBase {
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
     return new static(

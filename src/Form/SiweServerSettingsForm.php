@@ -36,7 +36,7 @@ class SiweServerSettingsForm extends ConfigFormBase {
       '#type' => 'checkbox',
       '#title' => $this->t('Allow Drupal login via SIWE Login Block'),
       '#default_value' => $config->get('allow_drupal_login') !== FALSE,
-      '#description' => $this->t('Allow users to login to the Drupal site using the SIWE Login Block. When enabled, the current site domain (@domain) will be included in the allowed domains for SIWE validation.', ['@domain' => \Drupal::request()->getHost()]),
+      '#description' => $this->t('Allow users to login to the Drupal site using the SIWE Login Block. When enabled, the current site domain (@domain) will be included in the allowed domains for SIWE validation.', ['@domain' => $this->getRequest()->getHost()]),
     ];
 
     $form['allowed_domains'] = [
@@ -70,7 +70,7 @@ class SiweServerSettingsForm extends ConfigFormBase {
 
       // Add current host if Drupal login is allowed.
       if ($form_state->getValue('allow_drupal_login')) {
-        $siwe_domains[] = \Drupal::request()->getHost();
+        $siwe_domains[] = $this->getRequest()->getHost();
       }
 
       // Extract domains from allowed origins (remove protocol and path)
@@ -86,7 +86,7 @@ class SiweServerSettingsForm extends ConfigFormBase {
 
       // Update SIWE Login configuration with all domains (comma-separated)
       // This allows SIWE Login to validate against multiple domains.
-      $siwe_login_config = \Drupal::configFactory()->getEditable('siwe_login.settings');
+      $siwe_login_config = $this->configFactory->getEditable('siwe_login.settings');
       $siwe_login_config->set('expected_domain', implode(',', $siwe_domains))->save();
     }
 
