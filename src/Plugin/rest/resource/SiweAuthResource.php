@@ -2,14 +2,12 @@
 
 namespace Drupal\siwe_server\Plugin\rest\resource;
 
-use Drupal\Core\Session\AccountInterface;
 use Drupal\rest\Plugin\ResourceBase;
 use Drupal\rest\ResourceResponse;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Drupal\siwe_login\Service\SiweAuthService;
 use Drupal\siwe_server\Service\NextDrupalAuthService;
-use Drupal\user\Entity\User;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -24,8 +22,7 @@ use Psr\Log\LoggerInterface;
  *   }
  * )
  */
-class SiweAuthResource extends ResourceBase
-{
+class SiweAuthResource extends ResourceBase {
 
   protected $siweAuthService;
   protected $nextDrupalAuthService;
@@ -39,7 +36,7 @@ class SiweAuthResource extends ResourceBase
     LoggerInterface $logger,
     SiweAuthService $siwe_auth_service,
     NextDrupalAuthService $next_drupal_auth_service,
-    Request $current_request
+    Request $current_request,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $serializer_formats, $logger);
     $this->siweAuthService = $siwe_auth_service;
@@ -47,8 +44,10 @@ class SiweAuthResource extends ResourceBase
     $this->currentRequest = $current_request;
   }
 
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition)
-  {
+  /**
+   *
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
     return new static(
       $configuration,
       $plugin_id,
@@ -64,13 +63,12 @@ class SiweAuthResource extends ResourceBase
   /**
    * Responds to POST requests for SIWE authentication.
    */
-  public function post(array $data): ResourceResponse
-  {
+  public function post(array $data): ResourceResponse {
     try {
-      // Validate required fields
+      // Validate required fields.
       $this->validateRequestData($data);
 
-      // Authenticate using SIWE
+      // Authenticate using SIWE.
       $user = $this->siweAuthService->authenticate($data);
 
       if (!$user) {
@@ -79,15 +77,15 @@ class SiweAuthResource extends ResourceBase
         ], 401);
       }
 
-      // Programmatically log in the user
+      // Programmatically log in the user.
       \Drupal::service('session_manager')->start();
       \Drupal::service('current_user')->setAccount($user);
 
-      // Generate JWT token using the JWT module
+      // Generate JWT token using the JWT module.
       $jwt_auth = \Drupal::service('jwt.authentication.jwt');
       $access_token = $jwt_auth->generateToken();
 
-      // Prepare response compatible with Next-Drupal
+      // Prepare response compatible with Next-Drupal.
       $tokens = [
         'access_token' => $access_token,
         'token_type' => 'Bearer',
@@ -97,11 +95,12 @@ class SiweAuthResource extends ResourceBase
 
       $response = new ResourceResponse($response_data, 200);
 
-      // Set appropriate headers
+      // Set appropriate headers.
       $response->addCacheableDependency(['#cache' => ['max-age' => 0]]);
 
       return $response;
-    } catch (\Exception $e) {
+    }
+    catch (\Exception $e) {
       $this->logger->error('SIWE authentication failed: @message', [
         '@message' => $e->getMessage(),
       ]);
@@ -115,8 +114,7 @@ class SiweAuthResource extends ResourceBase
   /**
    * Validates request data.
    */
-  protected function validateRequestData(array $data): void
-  {
+  protected function validateRequestData(array $data): void {
     $required = ['message', 'signature', 'address'];
 
     foreach ($required as $field) {
@@ -125,4 +123,5 @@ class SiweAuthResource extends ResourceBase
       }
     }
   }
+
 }

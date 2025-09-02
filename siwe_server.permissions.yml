@@ -4,6 +4,6 @@ siwe_server.api_access:
   restrict access: false
 
 administer siwe server settings:
-  title: 'Administer SIWE Server settings'
-  description: 'Allow users to configure SIWE Server module settings.'
+  title: "Administer SIWE Server settings"
+  description: "Allow users to configure SIWE Server module settings."
   restrict access: true

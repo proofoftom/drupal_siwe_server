@@ -1,17 +1,17 @@
 {
-    "name": "drupal/siwe_server",
-    "description": "API endpoints for SIWE authentication with Next-Drupal",
-    "type": "drupal-module",
-    "license": "GPL-2.0-or-later",
-    "require": {},
-    "autoload": {
-        "psr-4": {
-            "Drupal\\siwe_server\\": "src/"
-        }
-    },
-    "extra": {
-        "drupal": {
-            "version": "1.0.0"
-        }
+  "name": "drupal/siwe_server",
+  "description": "API endpoints for SIWE authentication with Next-Drupal",
+  "type": "drupal-module",
+  "license": "GPL-2.0-or-later",
+  "require": {},
+  "autoload": {
+    "psr-4": {
+      "Drupal\\siwe_server\\": "src/"
     }
+  },
+  "extra": {
+    "drupal": {
+      "version": "1.0.0"
+    }
+  }
 }
